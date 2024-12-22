@@ -1,0 +1,66 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        gradlePluginPortal()
+        mavenCentral()
+        maven { url "https://repo.grails.org/grails/core" }
+        maven { url "https://repository.apache.org/content/repositories/snapshots"}
+    }
+    dependencies { // Not Published to Gradle Plugin Portal
+        classpath "org.grails:grails-gradle-plugin:$grailsGradlePluginVersion"
+        classpath "org.grails.plugins:hibernate5:9.0.0-SNAPSHOT"
+    }
+}
+
+plugins {
+    id "groovy"
+    id "war"
+    id "idea"
+    id "eclipse"
+}
+
+// Not Published to Gradle Plugin Portal
+apply plugin: "org.grails.grails-plugin"
+apply plugin: 'maven-publish'
+apply from: layout.projectDirectory.file('gradle/publishing.gradle')
+
+version projectVersion
+group = "org.grails.plugins"
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url "https://repo.grails.org/grails/core/" }
+    maven { url "https://repository.apache.org/content/repositories/snapshots"}
+}
+
+dependencies {
+    profile "org.grails.profiles:plugin"
+    implementation "org.grails:grails-core"
+    implementation "org.grails:grails-logging"
+    implementation "org.grails:grails-plugin-databinding"
+    implementation "org.grails:grails-plugin-i18n"
+    implementation "org.grails:grails-plugin-interceptors"
+    implementation "org.grails:grails-plugin-rest"
+    implementation "org.grails:grails-plugin-services"
+    implementation "org.grails:grails-plugin-url-mappings"
+    implementation "org.grails:grails-web-boot"
+    implementation "org.grails.plugins:hibernate5"
+    implementation "org.springframework.boot:spring-boot-autoconfigure"
+    implementation "org.springframework.boot:spring-boot-starter-logging"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+    console "org.grails:grails-console"
+    runtimeOnly "com.h2database:h2"
+    runtimeOnly "org.apache.tomcat:tomcat-jdbc"
+    testImplementation "org.grails:grails-gorm-testing-support"
+    testImplementation "org.spockframework:spock-core"
+
+    implementation 'com.jcraft:jsch:0.1.55'
+
+}
+
+compileJava.options.release = 17
+
+tasks.withType(Test) {
+    useJUnitPlatform()
+}

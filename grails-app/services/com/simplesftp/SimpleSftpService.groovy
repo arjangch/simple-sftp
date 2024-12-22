@@ -5,7 +5,7 @@ import com.jcraft.jsch.ChannelSftp
 import com.jcraft.jsch.JSch
 import com.jcraft.jsch.Session
 
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 
 @Transactional
 class SimpleSftpService {
@@ -46,14 +46,14 @@ class SimpleSftpService {
 	private def connect(Closure c, boolean disconnect = true) {
 		Session session = null
 		ChannelSftp sftp = null
-		String server =  grailsApplication.config.simpleSftp.server
-		String username = grailsApplication.config.simpleSftp.username
-		String password = grailsApplication.config.simpleSftp.password
-		String remoteDir = grailsApplication.config.simpleSftp.remoteDir
-		Integer port = grailsApplication.config.simpleSftp.port.toInteger()
-		String keyFilePath = grailsApplication.config.simpleSftp.keyFilePath
-		Boolean throwException = grailsApplication.config.simpleSftp.throwException
-		
+		String server = grailsApplication.config.getProperty("simpleSftp.server")
+		String username = grailsApplication.config.getProperty("simpleSftp.username")
+		String password = grailsApplication.config.getProperty("simpleSftp.password")
+		String remoteDir = grailsApplication.config.getProperty("simpleSftp.remoteDir")
+		int port = grailsApplication.config.getProperty("simpleSftp.port").toInteger()
+		String keyFilePath = grailsApplication.config.getProperty("simpleSftp.keyFilePath")
+		Boolean throwException = grailsApplication.config.getProperty("simpleSftp.throwException")
+
 		try {
 			JSch jSch = new JSch()
 			session = jSch.getSession username, server, port
