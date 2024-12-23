@@ -4,42 +4,35 @@ Simple way to connect and perform basic file actions to an SFTP server. This ver
 ## Description
 Allows application to upload, download, delete, rename, create directory to an SFTP Server with one method call. The connections and boilerplate codes are all handled by the plugin. The plugin uses JCraft JSch (http://www.jcraft.com/jsch/) for its SSH2 implementation. The client can be authenticated via private key or password.
 
-## Installation
+## Dependency & Installation
 Add plugin to ```grails-app/conf/BuildConfig.groovy```
 ```groovy
-plugins {
-	compile ':simple-sftp:<latest-version>'
-}
-```
-
-
-## Dependency
-Add dependency to ```grails-app/conf/BuildConfig.groovy```
-```groovy
 dependencies {
-	compile 'com.jcraft:jsch:0.1.49'
+    implementation 'com.jcraft:jsch:0.1.55'
+    implementation 'org.grails.plugins:simple-sftp:0.4-SNAPSHOT'
 }
 ```
+
 ## Config
-Add config to ```grails-app/conf/Config.groovy```
+Add config to ```grails-app/conf/application.yml```
 ```groovy
-simpleSftp.server='qwerty.houston.com'
-simpleSftp.username='helloworld'
-simpleSftp.password='' // Leave empty string if you are using a private key, if password has a value it will overwrite the private key.
-simpleSftp.remoteDir='/path_to_remote_dir/my_dir'
-simpleSftp.port=22
-simpleSftp.keyFilePath='/path_to_pk/my_pk.ppk'
-simpleSftp.throwException=false // set to true if you want to handle the exceptions manually.
+simpleSftp: 
+   server='qwerty.houston.com'
+   username='helloworld'
+   password='' // Leave empty string if you are using a private key, if password has a value it will overwrite the private key.
+   remoteDir='/path_to_remote_dir/my_dir'
+   port=22
+   keyFilePath='/path_to_pk/my_pk.ppk'
+   throwException=false // set to true if you want to handle the exceptions manually.
 ```
 
 ## Usage
 Available methods
 ```groovy
-uploadFile(InputStream inputStream, String fileName)
-downloadFile(String fileName)
-removeFile(String fileName)
-renameFile(String oldPath, String newPath)
-createDir(String dirName)
+def instrm = IOUtils.toInputStream("upload file text 1", StandardCharsets.UTF_8)
+simpleSftpService.uploadFile(instrm, "textfile1.txt")
+simpleSftpService.removeFile("textfile1.txt")
+simpleSftpService.renameFile("textfile2.txt", "textfile_renamed.txt")
 ```
 
 ## Sample code
@@ -47,13 +40,14 @@ Inject the service class, from there you can call the uploadFile(), downloadFile
 ```groovy
 class MyController {
 	// inject the service class.
-	def simpleSftpService
+    SimpleSftpService simpleSftpService
 
-	File file = File.createTempFile('testx', 'xml')
-	file.write('test xml file content here')
-	InputStream inputStream = new BufferedInputStream(new FileInputStream(file))
-
-	// method call on service class
-	simpleSftpService.uploadFile(inputStream, 'testx.xml')
+    def myMethod() {
+        simpleSftpService.uploadFile(instrm, "textfile1.txt")
+        simpleSftpService.removeFile("textfile1.txt")
+        simpleSftpService.renameFile("textfile2.txt", "textfile_renamed.txt")
+        simpleSftpService.downloadFile("textfile1.txt")
+        simpleSftpService.createDir("temp")
+    }
 }
 ```
